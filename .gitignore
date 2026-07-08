@@ -1,0 +1,16 @@
+# Private CV source material
+/docs/**
+
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea
