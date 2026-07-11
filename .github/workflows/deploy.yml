@@ -1,0 +1,62 @@
+# Build the site and deploy it to S3 + CloudFront on every push to main.
+#
+# Required repo configuration (Settings -> Secrets and variables -> Actions):
+#   Secret    AWS_ROLE_ARN                 ARN of the IAM role GitHub assumes via OIDC
+#   Variable  AWS_REGION                   e.g. eu-central-1
+#   Variable  S3_BUCKET                    target bucket name (no s3:// prefix)
+#   Variable  CLOUDFRONT_DISTRIBUTION_ID   distribution to invalidate after upload
+#
+# One-time AWS setup (outside this repo):
+#   1. Add the GitHub OIDC provider in IAM:
+#        token.actions.githubusercontent.com, audience sts.amazonaws.com
+#   2. Create an IAM role whose trust policy is scoped to this repo + branch:
+#        repo:joni1612/<repo>:ref:refs/heads/main
+#   3. Grant the role s3:ListBucket, s3:PutObject, s3:DeleteObject on the bucket
+#      and cloudfront:CreateInvalidation on the distribution.
+
+name: Deploy to S3
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A newer push to main supersedes an in-flight deploy.
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # required for OIDC
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Sync dist to S3
+        run: aws s3 sync dist/ "s3://${{ vars.S3_BUCKET }}" --delete
+
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --paths "/*"
