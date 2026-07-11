@@ -24,4 +24,11 @@ export const projects: Project[] = [
     tech: ["Next.js", "React", "TypeScript", "OpenAI", "Stripe", "Tailwind CSS"],
     githubUrl: "https://github.com/joni1612/running-plan-generator",
   },
+  {
+    name: "Invoice Extractor",
+    blurb:
+      "Ingests PDF and JPEG invoices, extracts structured data with Claude's vision, validates the results, flags duplicates, and lays everything out in a table.",
+    tech: ["Python", "FastAPI", "Claude", "React", "Vite", "Tailwind CSS"],
+    githubUrl: "https://github.com/joni1612/DemoInvoiceExtractor",
+  },
 ];
