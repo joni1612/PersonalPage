@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Website browser checks</title></head>
+  <body>
+    <h1>Website browser checks</h1>
+    <p>Runs the actual pages in an iframe. Available only on the development server; not included in the production build.</p>
+    <p id="status" role="status">Running…</p>
+    <ol id="results"></ol>
+    <iframe id="page" title="Website under test" style="display:block;border:1px solid #aaa;height:900px"></iframe>
+    <script type="module" src="/tests/browser.ts"></script>
+  </body>
+</html>

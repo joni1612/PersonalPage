@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-for (const path of ["/", "/projects", "/missing", "/intervalsicu"]) {
+for (const path of ["/", "/projects", "/missing", "/intervalsicu", "/intervalsicu/privacy"]) {
   test(`direct load and reload of ${path} are accessible without horizontal overflow`, async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));
@@ -28,7 +28,7 @@ test("project cards reveal a real destination on tap and keyboard focus", async 
   await expect(link).toBeFocused();
   const box = await link.boundingBox();
   expect(box).not.toBeNull();
-  expect(await link.evaluate(element => {
+  await expect.poll(() => link.evaluate(element => {
     const r = element.getBoundingClientRect();
     const hit = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
     return hit === element || element.contains(hit);
