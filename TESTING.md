@@ -18,3 +18,9 @@ Red: first test import failed because production routes were defined inside the 
 Green: shared production routes and a fallback page make all four component tests pass. Tests cover CV/experience/contact content, real project destinations, secure external links, keyboard navigation, active navigation state, main-content focus and the skip link. Production build passes.
 
 Browser execution in the Codex shell is currently blocked by macOS sandbox restrictions (`bootstrap_check_in … Permission denied`), before tests execute. Browser tests are included for local/CI execution; this environment failure is not a passing browser check. Dependency installation used a writable temporary npm cache; `npm audit` reports zero vulnerabilities after compatible updates and selecting a patched Vitest release.
+
+## 15 October 2026 — companion app landing page
+
+Red: all three new `/intervalsicu` tests failed against the existing fallback page (missing overview, screenshots and privacy/support links).
+
+Green: implemented the overview, four feature explanations, screenshot gallery, provider/availability caveats and contact/privacy links. Eleven component/asset tests pass. Four unedited 1206×2622 screenshots were exported from a passing, demo-only Xcode UI capture on iPhone 17 / iOS 27. They contain no personal account data. The temporary capture harness was restored afterward; app product code was not changed. File tests validate the actual PNG headers and dimensions. In-app browser review confirmed all four images loaded after restarting Vite (new public directories were not observed by the sandboxed file watcher).

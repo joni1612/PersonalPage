@@ -4,6 +4,7 @@ A small, static personal site built with React, TypeScript, and Vite.
 
 - `/` — CV: summary, tech stack, experience.
 - `/projects` — personal projects as hover/tap flip cards linking to GitHub.
+- `/intervalsicu` — companion app overview, simulator screenshots and support contact.
 
 ## Develop
 
