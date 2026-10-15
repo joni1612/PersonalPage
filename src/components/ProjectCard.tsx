@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import type { Project } from "../types";
 import styles from "./ProjectCard.module.css";
 
@@ -17,7 +18,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           <h2 className={styles.name}>{project.name}</h2>
           <p className={styles.blurb}>{project.blurb}</p>
           <span className={styles.hint} aria-hidden="true">
-            Tech &amp; code &rarr;
+            {project.pagePath ? "Tech & app →" : "Tech & code →"}
           </span>
         </div>
 
@@ -31,7 +32,14 @@ export default function ProjectCard({ project }: { project: Project }) {
               <li key={tech}>{tech}</li>
             ))}
           </ul>
-          <a
+          {project.pagePath ? <Link
+            className={styles.repo}
+            to={project.pagePath}
+            onClick={(e) => e.stopPropagation()}
+          >
+            Explore the app &rarr;
+            <span className="visually-hidden"> ({project.name})</span>
+          </Link> : <a
             className={styles.repo}
             href={project.githubUrl}
             target="_blank"
@@ -40,7 +48,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           >
             View on GitHub &rarr;
             <span className="visually-hidden"> ({project.name})</span>
-          </a>
+          </a>}
         </div>
       </div>
     </article>

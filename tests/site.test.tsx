@@ -36,10 +36,14 @@ describe("personal site", () => {
     expect(within(list).getAllByRole("article")).toHaveLength(projects.length);
     for (const project of projects) {
       expect(within(list).getByRole("heading", { name: project.name, level: 2 })).toBeVisible();
-      const link = within(list).getByRole("link", { name: `View on GitHub → (${project.name})` });
-      expect(link).toHaveAttribute("href", project.githubUrl);
-      expect(link).toHaveAttribute("rel", "noopener noreferrer");
-      expect(link).toHaveAttribute("target", "_blank");
+      if (project.githubUrl) {
+        const link = within(list).getByRole("link", { name: `View on GitHub → (${project.name})` });
+        expect(link).toHaveAttribute("href", project.githubUrl);
+        expect(link).toHaveAttribute("rel", "noopener noreferrer");
+        expect(link).toHaveAttribute("target", "_blank");
+      } else {
+        expect(within(list).getByRole("link", { name: `Explore the app → (${project.name})` })).toHaveAttribute("href", project.pagePath);
+      }
     }
     await user.click(within(list).getByRole("heading", { name: projects[0].name, level: 2 }));
     expect(within(list).getByRole("link", { name: `View on GitHub → (${projects[0].name})` })).toBeInTheDocument();

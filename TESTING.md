@@ -34,3 +34,11 @@ Green: 15 component/asset tests pass. The public page identifies the developer a
 The live-browser runner (`/tests/browser.html`, development only) is an alternative to launching a new browser process. It runs axe inside each iframe's own realm, because cross-window DOM/options fail axe's argument validation. It covers five real routes at 1280px and 390px, image loading and navigation/focus in addition to accessibility.
 
 Live-browser result: **10 passed, 0 failed**. Initial contrast failures sampled the existing CV/Projects entrance animation while text was nearly transparent. Waiting for font readiness and the finite animations to finish made the audit evaluate the actual settled page without changing product colours or disabling accessibility rules. The landing and privacy pages were also reviewed visually at phone width with no horizontal overflow.
+
+## 15 October 2026 — companion project card
+
+Red: all three new card tests failed before the app was added: no internal app destination, no keyboard path into the overview, and only five cards.
+
+Green: the sixth card links to the overview, with SwiftUI/Swift Charts/WidgetKit/OAuth/Workers details. A union type requires exactly one internal or external destination; the existing five GitHub destinations are retained. All 18 component/asset tests pass. Keyboard navigation reaches the overview, main content receives focus, and the All projects link returns to the portfolio. Playwright adds mouse/touch and keyboard end-to-end cases; the live-browser runner also exercises the actual internal project navigation at both widths.
+
+Final local verification: **18 component/asset tests passed; 10 live-browser route/accessibility checks passed** (five routes at both widths); production TypeScript/Vite build passed; dependency audit found zero vulnerabilities. Additional in-app-browser clicks and keyboard activation opened the companion overview from its card and focused main content. Playwright's separate 20 production-browser cases are configured for local/CI execution but could not be launched by this sandbox; do not confuse that limitation with the passing live-browser suite. No push or deployment was performed.

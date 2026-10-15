@@ -54,4 +54,11 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/joni1612/JobSearchPipeline",
   },
+  {
+    name: "Intervals ICU Companion App",
+    blurb:
+      "A native iOS companion for a quick training check: Fitness, Fatigue and Form, readable activity charts, kilometre splits, a calendar and a Home Screen widget. Connected to Intervals.icu with read-only OAuth access.",
+    tech: ["Swift", "SwiftUI", "Swift Charts", "WidgetKit", "OAuth", "Cloudflare Workers"],
+    pagePath: "/intervalsicu",
+  },
 ];

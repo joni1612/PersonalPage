@@ -21,7 +21,7 @@ for (const path of ["/", "/projects", "/missing", "/intervalsicu", "/intervalsic
 test("project cards reveal a real destination on tap and keyboard focus", async ({ page }) => {
   await page.goto("/projects");
   const card = page.getByRole("article").filter({ has: page.getByRole("heading", { name: "RAG Doc Chat", exact: true }) });
-  await card.getByRole("heading", { name: "RAG Doc Chat", exact: true }).click();
+  await card.click();
   const link = card.getByRole("link", { name: /View on GitHub/ });
   await expect(link).toHaveAttribute("href", "https://github.com/joni1612/rag_demo");
   await link.focus();

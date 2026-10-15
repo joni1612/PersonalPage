@@ -3,7 +3,7 @@
 A small, static personal site built with React, TypeScript, and Vite.
 
 - `/` — CV: summary, tech stack, experience.
-- `/projects` — personal projects as hover/tap flip cards linking to GitHub.
+- `/projects` — personal projects as hover/tap flip cards linking to GitHub or their app pages.
 - `/intervalsicu` — companion app overview, simulator screenshots and support contact.
 - `/intervalsicu/privacy` — public privacy policy for the iOS app, widget and OAuth login service.
 
@@ -29,12 +29,10 @@ After deployment, use your site origin plus `/intervalsicu` as the app website/s
 
 The privacy copy follows the current app and stateless OAuth code. Before publishing it, verify the actual Cloudflare/AWS logging configuration and email-provider retention against the policy. The page deliberately does not promise that infrastructure has no logs or that uninstall always removes a Keychain credential. Keep the policy, App Store privacy questionnaire and actual product behaviour consistent.
 
-## Before you ship
+## Site content
 
-Two placeholder files need real values:
-
-- `src/data/site.ts` — your GitHub and LinkedIn URLs (email is set).
-- `src/data/projects.ts` — replace the three `// TODO` placeholder projects.
+Profile/contact information lives in `src/data/site.ts` and `src/data/cv.ts`.
+Projects live in `src/data/projects.ts`; each has either an external `githubUrl` or an internal `pagePath`. The companion card uses `/intervalsicu` and does not advertise a nonexistent public repository.
 
 ## Deploy to S3 + CloudFront (static)
 

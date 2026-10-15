@@ -23,13 +23,15 @@ export interface CV {
   roles: Role[];
 }
 
-export interface Project {
+export type Project = {
   name: string;
   /** 1-3 sentence description shown on the card front. */
   blurb: string;
   tech: string[];
-  githubUrl: string;
-}
+} & (
+  | { githubUrl: string; pagePath?: never }
+  | { pagePath: string; githubUrl?: never }
+);
 
 export interface SocialLinks {
   github: string;

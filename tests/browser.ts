@@ -55,6 +55,12 @@ for (const width of [1280, 390]) {
           check(doc.activeElement === link, "Project link cannot receive keyboard focus");
           if (link.target === "_blank") check(link.rel.includes("noopener") && link.rel.includes("noreferrer"), "Unsafe external link");
         }
+        const appLink = doc.querySelector<HTMLAnchorElement>('article a[href="/intervalsicu"]');
+        check(appLink, "Companion project destination missing");
+        appLink.focus();
+        appLink.click();
+        await waitFor(() => doc.querySelector("h1")?.textContent === "Intervals ICU Companion", "Project link did not open the app overview");
+        check(doc.activeElement?.id === "main", "Project navigation did not move focus");
       }
       if (path === "/intervalsicu") {
         const privacy = doc.querySelector<HTMLAnchorElement>('a[href="/intervalsicu/privacy"]');

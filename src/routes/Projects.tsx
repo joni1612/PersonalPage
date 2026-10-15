@@ -9,7 +9,7 @@ export default function Projects() {
         <h1 className={styles.heading}>Projects</h1>
         <p className={`${styles.lede} measure`}>
           A few things I have built outside of client and product work. Hover or
-          tap a card to see the stack and jump to the code.
+          tap a card to see the stack and explore the app or its code.
         </p>
       </header>
 
