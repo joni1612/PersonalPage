@@ -14,3 +14,9 @@ npm-debug.log*
 # Editor / OS
 .DS_Store
 .idea
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo

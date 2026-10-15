@@ -14,6 +14,11 @@ npm run build      # type-check + bundle to dist/
 npm run preview    # serve the production build locally
 ```
 
+## Tests
+
+Use Node 22.12+ and install the test browser once with `npx playwright install chromium`.
+Run `npm test` for route/component checks, `npm run test:e2e` for desktop/mobile production-browser and accessibility checks, or `npm run check` for all checks including the build. See [TESTING.md](TESTING.md) for the red/green record and environment limitations. GitHub Actions runs the complete suite on pushes and pull requests.
+
 ## Before you ship
 
 Two placeholder files need real values:
