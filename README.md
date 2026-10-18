@@ -88,3 +88,13 @@ should be revalidated, which the invalidation above handles.
 Load the site, then **hard-refresh `/projects` directly** (not via in-app
 navigation). It should return the app with a 200, not an S3 error page. That
 confirms the SPA fallback is configured correctly.
+
+## Tempo Studio publication pages
+
+- `/tempostudio` — guided native video editor, real demo screenshots, current Intervals.icu integration and support.
+- `/tempostudio/privacy` — Tempo Studio's native-PKCE, media, route/fitness data, local retention and sharing policy.
+- `/projects` — includes Tempo Studio alongside the existing Companion and repository projects.
+
+After deployment, use `https://jonathangriesinger.de/tempostudio` for marketing, `https://jonathangriesinger.de/tempostudio#support` for support and `https://jonathangriesinger.de/tempostudio/privacy` for the App Store privacy URL. The app is preparing for launch; no App Store download link or badge is fabricated. Keep the public policy and App Store privacy answers consistent with the shipping binary.
+
+The existing CloudFront SPA fallback must also cover direct requests to both Tempo Studio routes. A push to `main` triggers the existing S3/CloudFront deployment workflow. Creating the local commit does not deploy the site. The privacy URL must be publicly reachable before submitting the iOS app.

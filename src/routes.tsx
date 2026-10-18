@@ -5,6 +5,8 @@ import Projects from "./routes/Projects";
 import NotFound from "./routes/NotFound";
 import IntervalsICU from "./routes/IntervalsICU";
 import IntervalsPrivacy from "./routes/IntervalsPrivacy";
+import TempoStudio from "./routes/TempoStudio";
+import TempoPrivacy from "./routes/TempoPrivacy";
 
 export const routes: RouteObject[] = [{
   path: "/",
@@ -14,6 +16,8 @@ export const routes: RouteObject[] = [{
     { path: "projects", element: <Projects /> },
     { path: "intervalsicu", element: <IntervalsICU /> },
     { path: "intervalsicu/privacy", element: <IntervalsPrivacy /> },
+    { path: "tempostudio", element: <TempoStudio /> },
+    { path: "tempostudio/privacy", element: <TempoPrivacy /> },
     { path: "*", element: <NotFound /> },
   ],
 }];

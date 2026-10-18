@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-18",
+  "scope": [
+    "/tempostudio",
+    "/tempostudio/privacy",
+    "/projects"
+  ],
+  "tdd": {
+    "routes_red": "4 new route/navigation/privacy tests failed before implementation",
+    "assets_red": "5 real-image tests failed before screenshots existed",
+    "unit_green": 27,
+    "browser_green": 26,
+    "browser": "installed Google Chrome, isolated Playwright profile",
+    "checks": [
+      "direct load/reload",
+      "responsive overflow",
+      "WCAG axe",
+      "keyboard/focus",
+      "real image loading",
+      "support/privacy navigation",
+      "existing Companion and portfolio regressions"
+    ]
+  },
+  "deployment": "local commit only; existing workflow deploys on push to main"
+}

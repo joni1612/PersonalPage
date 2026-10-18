@@ -61,4 +61,10 @@ export const projects: Project[] = [
     tech: ["Swift", "SwiftUI", "Swift Charts", "WidgetKit", "OAuth", "Cloudflare Workers"],
     pagePath: "/intervalsicu",
   },
+  {
+    name: "Tempo Studio",
+    blurb: "Turn training footage into vertical Reels with route and activity overlays, animated titles and matching covers. A native timeline editor with recurring series, saved branding and direct Intervals.icu OAuth.",
+    tech: ["Swift", "SwiftUI", "AVFoundation", "Core Animation", "OAuth / PKCE"],
+    pagePath: "/tempostudio",
+  },
 ];

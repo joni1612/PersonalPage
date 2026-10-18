@@ -31,7 +31,7 @@ describe("companion project card", () => {
 
   it("keeps all existing repository destinations and unique project names", () => {
     renderPage("/projects");
-    expect(screen.getAllByRole("article")).toHaveLength(6);
+    expect(screen.getAllByRole("article")).toHaveLength(7);
     expect(new Set(projects.map(p => p.name)).size).toBe(projects.length);
     expect(screen.getAllByRole("link", { name: /View on GitHub/ })).toHaveLength(5);
   });
