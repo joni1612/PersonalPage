@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import PageMeta from "../components/PageMeta";
 import { social } from "../data/site";
 import styles from "./IntervalsICU.module.css";
+import ResponsiveImage from "../components/ResponsiveImage";
 
 const screenshots = [
   { file: "trends", title: "See the bigger picture", text: "Follow your training over time, with the values for your selected date always close at hand.", alt: "Trends screen showing Fitness and Fatigue history with a pinned summary of the selected date." },
@@ -11,7 +11,6 @@ const screenshots = [
 
 export default function IntervalsICU() {
   return <div className={`shell ${styles.page}`}>
-    <PageMeta title="Intervals ICU Companion — Jonathan Griesinger" description="A native iOS companion for Intervals.icu. Check your training status, explore workouts and see your week at a glance." />
     <Link to="/projects" className={styles.back}>← All projects</Link>
     <section className={styles.hero} aria-labelledby="app-title">
       <div className={styles.heroCopy}>
@@ -23,7 +22,7 @@ export default function IntervalsICU() {
         <p className={styles.note}>An Intervals.icu account is required to view your own training. You can explore the app with demo data.</p>
       </div>
       <figure className={styles.heroFigure}>
-        <img className={styles.phone} src="/images/intervalsicu/today.png" width={1206} height={2622} fetchPriority="high" alt="Today screen with Fitness, Fatigue and Form values, their data date and a recent training chart." />
+        <ResponsiveImage asset="intervalsicu/today" sizes="(max-width: 420px) 65vw, 256px" className={styles.phone} src="/images/intervalsicu/today.png" width={1206} height={2622} loading="eager" fetchPriority="high" alt="Today screen with Fitness, Fatigue and Form values, their data date and a recent training chart." />
         <figcaption>Your daily check, without the digging.</figcaption>
       </figure>
     </section>
@@ -38,7 +37,7 @@ export default function IntervalsICU() {
     <section id="screenshots" className={styles.screenshots} aria-labelledby="screenshots-heading">
       <div className={styles.sectionHeading}><h2 id="screenshots-heading">Inside the app</h2><p>iPhone simulator screenshots with synthetic demo data.</p></div>
       <div className={styles.gallery}>{screenshots.map(item => <figure key={item.file}>
-        <div className={styles.screenCanvas}><a href={`/images/intervalsicu/${item.file}.png`} aria-label={`View full-size screenshot: ${item.title}`}><img className={styles.phone} src={`/images/intervalsicu/${item.file}.png`} width={1206} height={2622} loading="lazy" alt={item.alt} /></a></div>
+        <div className={styles.screenCanvas}><a href={`/images/intervalsicu/${item.file}.png`} aria-label={`View full-size screenshot: ${item.title}`}><ResponsiveImage asset={`intervalsicu/${item.file}`} sizes="240px" className={styles.phone} src={`/images/intervalsicu/${item.file}.png`} width={1206} height={2622} loading="lazy" alt={item.alt} /></a></div>
         <figcaption><h3>{item.title}</h3><p>{item.text}</p></figcaption>
       </figure>)}</div>
     </section>

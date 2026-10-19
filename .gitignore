@@ -6,6 +6,9 @@ node_modules
 
 # Build output
 dist
+.prerender/
+public/images/optimized/
+public/images/social/
 
 # Logs
 *.log

@@ -6,10 +6,13 @@ Use Node 22.12+ (Node 24 is used in CI). Run `npm ci`, then `npx playwright inst
 
 - `npm test`: route and user-interaction tests using the real route configuration.
 - `npm run build`: TypeScript checks and production bundle.
+- `npm run test:build`: generated HTML, crawl files, responsive image budgets, route splitting, font budgets and CloudFront routing/configuration tests.
 - `npm run test:e2e`: production-server checks on desktop and mobile Chromium, including axe accessibility, direct URL/reload, keyboard/touch interaction and overflow.
 - `npm run check`: all of the above. CI installs Chromium automatically.
 
-`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` optionally selects an existing Chromium binary. Otherwise Playwright uses its managed browser. No external website or real account is required by tests.
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` optionally selects an existing Chromium binary. Otherwise Playwright uses its managed browser, falling back to installed Google Chrome on macOS when the managed binary is absent. No external website or real account is required by tests.
+
+After building, `npm run audit:performance` records three cold-context samples per main route under the original audit's Fast 4G / 4× CPU conditions. It writes raw results and medians to `verification/seo-performance-results.json`. These synthetic diagnostics are not field Core Web Vitals or Lighthouse scores.
 
 ## 15 October 2026 — overall coverage
 
@@ -50,3 +53,19 @@ Added failing route tests first: the app overview, screenshot gallery, public pr
 New browser regressions cover direct load/reload, viewport overflow, WCAG/axe checks, actual image loading, keyboard navigation from Projects, privacy anchor links, focus and support links at desktop/mobile widths. Final test output is retained in `verification/tempostudio-*`.
 
 Final results: **27 unit/asset tests pass**, the production build succeeds and **26 desktop/mobile browser tests pass**, including the existing Companion routes. The packaged Playwright headless executable was absent; the existing executable-path setting was used with installed Google Chrome and an isolated test profile. No test assertions were skipped. A local in-app-browser visual check confirmed the overview and screenshot presentation. No deployment was performed.
+
+## SEO and performance (19 October 2026)
+
+Red: `node --test tests/seo-build.test.mjs` failed all nine checks because the homepage had no crawlable heading, other route HTML files were absent, and no crawl files existed. `npm test -- tests/seo.test.tsx` failed because Open Graph metadata was missing. The performance and hosting tests then failed on missing responsive images, route manifest and routing implementation.
+
+Green: prerendered route documents now contain their visible content, unique metadata, canonical URLs, social previews and structured data. Client navigation updates the same metadata model. Privacy policies remain indexable, unknown pages use `noindex, nofollow`, and crawl files contain only public canonical URLs. Project case studies are generated alongside the existing six pages.
+
+Performance checks require AVIF/WebP responsive sources, an AVIF Tempo hero below 100 KB at 512px, route code splitting, and at most seven Latin WOFF2 files below 150 KB total. Hosting tests execute the generated edge function against known pages, trailing-slash redirects, unknown pages and missing assets, and verify preservation of unrelated CDN settings.
+
+Browser tests now cover every route with JavaScript disabled, hydration and back navigation, metadata updates without duplicate tags, real 404 responses, crawl-file content types, and modern screenshot loading. The original full-size PNG destinations remain tested.
+
+The first browser run exposed a startup deadlock: the entry module awaited a lazy route whose shared dependencies imported that same entry module. Moving startup into an async function allowed module initialization to finish and fixed all eight failing hydration/focus checks. A further red/green regression caught double-encoding of query parameters in canonical redirects. The preview now mirrors production Brotli compression, covered by a response-header check.
+
+Final verification: **28 unit/asset tests and 14 generated-build/hosting tests pass**. The full browser suite passed **46 desktop/mobile checks**, followed by **four additional desktop/mobile case-study accessibility checks**. Production builds and whitespace checks pass. No AWS writes or deployment were performed. The deployment role needs the additional CloudFront permissions in `README.md` before publishing.
+
+The performance run collected three samples for each main route. Median LCP was 1.13 s on the homepage, 1.09 s on Projects, 0.60 s on Intervals ICU Companion and 0.62 s on Tempo Studio. Raw samples, resource transfer figures and CLS are retained in `verification/seo-performance-results.json`; the audit document compares them with the original baseline.

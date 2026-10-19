@@ -6,20 +6,22 @@ A small, static personal site built with React, TypeScript, and Vite.
 - `/projects` — personal projects as hover/tap flip cards linking to GitHub or their app pages.
 - `/intervalsicu` — companion app overview, simulator screenshots and support contact.
 - `/intervalsicu/privacy` — public privacy policy for the iOS app, widget and OAuth login service.
+- `/tempostudio` and `/tempostudio/privacy` — video editor overview and privacy policy.
+- `/projects/rag-doc-chat` and `/projects/invoice-extractor` — project case studies.
 
 ## Develop
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
-npm run build      # type-check + bundle to dist/
+npm run dev        # generate images, then serve at http://localhost:5173
+npm run build      # images, type-check, split client bundle, static HTML, crawl files
 npm run preview    # serve the production build locally
 ```
 
 ## Tests
 
 Use Node 22.12+ and install the test browser once with `npx playwright install chromium`.
-Run `npm test` for route/component checks, `npm run test:e2e` for desktop/mobile production-browser and accessibility checks, or `npm run check` for all checks including the build. See [TESTING.md](TESTING.md) for the red/green record and environment limitations. GitHub Actions runs the complete suite on pushes and pull requests.
+Run `npm test` for route/component checks, `npm run test:build` after building for generated SEO/image/hosting checks, and `npm run test:e2e` for desktop/mobile production-browser and accessibility checks. `npm run check` runs all checks including the build. See [TESTING.md](TESTING.md) for the red/green record. GitHub Actions runs the complete suite on pushes and pull requests.
 
 If your environment cannot launch a test browser, start `npm run dev` and open `/tests/browser.html` in an existing browser. It checks the real routes at desktop/mobile widths with axe, loaded images, focus, navigation and overflow. This development-only runner is not included in `dist/`.
 
@@ -34,17 +36,21 @@ The privacy copy follows the current app and stateless OAuth code. Before publis
 Profile/contact information lives in `src/data/site.ts` and `src/data/cv.ts`.
 Projects live in `src/data/projects.ts`; each has either an external `githubUrl` or an internal `pagePath`. The companion card uses `/intervalsicu` and does not advertise a nonexistent public repository.
 
+Route titles, descriptions, canonical URLs, social metadata and schema live in `src/data/seo.ts`. All eight public pages, including both privacy policies, remain indexable. Add new pages to the metadata map and both route configurations; build tests enforce the published HTML contract. Case studies use only the project information already present in this repository.
+
+The build generates responsive AVIF/WebP images and 1200 × 630 social JPEGs with Sharp. Generated images are ignored by Git and recreated from the original checked-in screenshots and portrait. Original PNGs remain available from full-size screenshot links. Routes load their own JavaScript/CSS; the initial HTML contains the visible content, metadata and route stylesheet before hydration.
+
 ## Deploy to S3 + CloudFront (static)
 
 `npm run build` produces a fully static `dist/` (HTML, JS, CSS, self-hosted fonts). No server runtime is required.
 
 ### 1. S3 bucket
 
-Create a private bucket (e.g. `griesinger-portfolio`) and upload the build:
+Create a private bucket (e.g. `griesinger-portfolio`). The deployment workflow uploads assets first, then images and documents with explicit cache headers. It retains older hashed assets so visitors with an open tab can still navigate after a deployment.
 
 ```bash
 npm run build
-aws s3 sync dist/ s3://YOUR_BUCKET --delete
+npm run test:build
 ```
 
 Keep the bucket private and serve it through CloudFront with an Origin Access Control (OAC); do not enable public S3 website hosting.
@@ -55,22 +61,26 @@ Keep the bucket private and serve it through CloudFront with an Origin Access Co
 - **Default root object:** `index.html`.
 - **Viewer protocol policy:** Redirect HTTP to HTTPS.
 
-### 3. SPA routing fallback (required)
+### 3. Static route rewrites and real 404s (required)
 
-This app uses client-side routing (`react-router`). A direct request to `/projects`, `/intervalsicu` or `/intervalsicu/privacy`
-has no matching S3 object, so S3 returns 403/404. Map those back to the app shell so
-the router can handle the path.
+The build creates `/projects/index.html` and equivalent documents for every public route. A generated CloudFront viewer-request function rewrites only known routes to these objects. It redirects trailing-slash and `index.html` URLs to their canonical clean URLs, preserving query parameters. Requests for files and unknown routes pass through to S3.
 
-In the CloudFront distribution, add **Custom error responses**:
+The deployment workflow runs `node scripts/configure-cdn.mjs --apply` to publish the routing function and associate it with the default behavior. It changes the old SPA custom error responses to:
 
 | HTTP error code | Response page path | HTTP response code |
 | --------------- | ------------------ | ------------------ |
-| 403             | `/index.html`      | 200                |
-| 404             | `/index.html`      | 200                |
+| 403             | `/404.html`        | 404                |
+| 404             | `/404.html`        | 404                |
 
-> Alternative with no CloudFront config: switch `createBrowserRouter` to a hash
-> router in `src/main.tsx`. URLs then look like `/#/projects`. The custom-error
-> approach above keeps clean URLs and is recommended.
+The deployment role additionally needs `cloudfront:GetDistribution`, `cloudfront:GetDistributionConfig`, `cloudfront:UpdateDistribution`, `cloudfront:ListFunctions`, `cloudfront:DescribeFunction`, `cloudfront:CreateFunction`, `cloudfront:UpdateFunction`, and `cloudfront:PublishFunction`. Scope distribution operations to the website and function operations to `personal-page-routes-*` where IAM supports resource restrictions. The script preserves unrelated distribution settings and refuses to replace an existing viewer-request function or Lambda association. Integrate such an existing function explicitly before deployment.
+
+To prepare and inspect the changes using AWS credentials without applying them:
+
+```bash
+CLOUDFRONT_DISTRIBUTION_ID=YOUR_DIST_ID node scripts/configure-cdn.mjs
+```
+
+Inspect `.prerender/cloudfront-function.js` and `.prerender/distribution-config.json`, then use `--apply` when ready to deploy. No AWS changes are made by the normal build or tests.
 
 ### 4. Redeploys
 
@@ -80,14 +90,13 @@ CloudFront caches aggressively. After each `aws s3 sync`, invalidate the cache:
 aws cloudfront create-invalidation --distribution-id YOUR_DIST_ID --paths "/*"
 ```
 
-Hashed asset filenames (fonts, JS, CSS) are safe to cache long-term; `index.html`
-should be revalidated, which the invalidation above handles.
+The workflow sets hashed assets to `public, max-age=31536000, immutable`, images to a one-day revalidated lifetime, HTML to `no-cache`, and crawl files to a one-hour revalidated lifetime. CloudFront compression remains enabled.
 
 ## Verify the deploy
 
-Load the site, then **hard-refresh `/projects` directly** (not via in-app
-navigation). It should return the app with a 200, not an S3 error page. That
-confirms the SPA fallback is configured correctly.
+Load and hard-refresh `/projects` directly. Its HTML source must contain the Projects heading and unique metadata. Confirm that `/robots.txt` returns plain text, `/sitemap.xml` returns XML, and both an unknown page and a missing asset return HTTP 404. Use `npm run preview` to exercise the same routing, content types and cache policies locally.
+
+After deployment, register `https://jonathangriesinger.de/sitemap.xml` in Google Search Console and Bing Webmaster Tools using the site owner's accounts. Account verification is an external setup step, not part of the build.
 
 ## Tempo Studio publication pages
 
@@ -97,4 +106,4 @@ confirms the SPA fallback is configured correctly.
 
 After deployment, use `https://jonathangriesinger.de/tempostudio` for marketing, `https://jonathangriesinger.de/tempostudio#support` for support and `https://jonathangriesinger.de/tempostudio/privacy` for the App Store privacy URL. The app is preparing for launch; no App Store download link or badge is fabricated. Keep the public policy and App Store privacy answers consistent with the shipping binary.
 
-The existing CloudFront SPA fallback must also cover direct requests to both Tempo Studio routes. A push to `main` triggers the existing S3/CloudFront deployment workflow. Creating the local commit does not deploy the site. The privacy URL must be publicly reachable before submitting the iOS app.
+The generated CloudFront function covers direct requests to both Tempo Studio routes. A push to `main` triggers the S3/CloudFront deployment workflow. Creating a local commit does not deploy the site. The privacy URL must be publicly reachable before submitting the iOS app.

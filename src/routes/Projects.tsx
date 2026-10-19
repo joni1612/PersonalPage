@@ -1,6 +1,7 @@
 import { projects } from "../data/projects";
 import ProjectCard from "../components/ProjectCard";
 import styles from "./Projects.module.css";
+import { Link } from "react-router-dom";
 
 export default function Projects() {
   return (
@@ -21,6 +22,10 @@ export default function Projects() {
             </li>
           ))}
         </ul>
+      </section>
+      <section className={styles.caseStudy} aria-labelledby="case-studies-heading">
+        <h2 id="case-studies-heading">Project case studies</h2>
+        <p>Explore the document workflows behind <Link to="/projects/rag-doc-chat">RAG Doc Chat</Link> and <Link to="/projects/invoice-extractor">Invoice Extractor</Link>.</p>
       </section>
     </div>
   );

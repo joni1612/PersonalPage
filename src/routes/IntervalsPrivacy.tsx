@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import PageMeta from "../components/PageMeta";
 import { social } from "../data/site";
 import styles from "./IntervalsPrivacy.module.css";
 
@@ -13,7 +12,6 @@ const contents = [
 
 export default function IntervalsPrivacy() {
   return <div className={`shell ${styles.page}`}>
-    <PageMeta title="Privacy policy · Intervals ICU Companion — Jonathan Griesinger" description="How Intervals ICU Companion handles your Intervals.icu connection, training data, local storage, widget data and privacy choices." />
     <Link to="/intervalsicu" className={styles.back}>Back to the app</Link>
     <header className={styles.header}>
       <p className={styles.eyebrow}>Intervals ICU Companion</p>

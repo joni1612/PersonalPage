@@ -1,0 +1,191 @@
+{
+  "measuredAt": "2026-10-19T04:22:47.722Z",
+  "conditions": {
+    "viewport": "390x844",
+    "deviceScaleFactor": 1,
+    "latencyMs": 150,
+    "downloadBytesPerSecond": 200000,
+    "cpuSlowdown": 4,
+    "samples": 3,
+    "compression": "Brotli",
+    "source": "local production preview"
+  },
+  "summary": [
+    {
+      "path": "/",
+      "lcpMs": 1128,
+      "cls": 0.003,
+      "resourceTransferKB": 199
+    },
+    {
+      "path": "/projects",
+      "lcpMs": 1092,
+      "cls": 0.001,
+      "resourceTransferKB": 191
+    },
+    {
+      "path": "/intervalsicu",
+      "lcpMs": 600,
+      "cls": 0.002,
+      "resourceTransferKB": 222
+    },
+    {
+      "path": "/tempostudio",
+      "lcpMs": 620,
+      "cls": 0.017,
+      "resourceTransferKB": 224
+    }
+  ],
+  "samples": [
+    {
+      "path": "/",
+      "sample": 1,
+      "lcpMs": 1252,
+      "cls": 0.003,
+      "resourceTransferKB": 199,
+      "requests": 12,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/portrait-480.avif"
+      ]
+    },
+    {
+      "path": "/",
+      "sample": 2,
+      "lcpMs": 1092,
+      "cls": 0.003,
+      "resourceTransferKB": 199,
+      "requests": 12,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/portrait-480.avif"
+      ]
+    },
+    {
+      "path": "/",
+      "sample": 3,
+      "lcpMs": 1128,
+      "cls": 0.002,
+      "resourceTransferKB": 199,
+      "requests": 12,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/portrait-480.avif"
+      ]
+    },
+    {
+      "path": "/projects",
+      "sample": 1,
+      "lcpMs": 1060,
+      "cls": 0.001,
+      "resourceTransferKB": 191,
+      "requests": 13,
+      "imageSources": []
+    },
+    {
+      "path": "/projects",
+      "sample": 2,
+      "lcpMs": 1112,
+      "cls": 0.001,
+      "resourceTransferKB": 191,
+      "requests": 13,
+      "imageSources": []
+    },
+    {
+      "path": "/projects",
+      "sample": 3,
+      "lcpMs": 1092,
+      "cls": 0.001,
+      "resourceTransferKB": 191,
+      "requests": 13,
+      "imageSources": []
+    },
+    {
+      "path": "/intervalsicu",
+      "sample": 1,
+      "lcpMs": 604,
+      "cls": 0.002,
+      "resourceTransferKB": 222,
+      "requests": 14,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/intervalsicu/today-256.avif",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "path": "/intervalsicu",
+      "sample": 2,
+      "lcpMs": 596,
+      "cls": 0.002,
+      "resourceTransferKB": 222,
+      "requests": 14,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/intervalsicu/today-256.avif",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "path": "/intervalsicu",
+      "sample": 3,
+      "lcpMs": 600,
+      "cls": 0.002,
+      "resourceTransferKB": 222,
+      "requests": 14,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/intervalsicu/today-256.avif",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "path": "/tempostudio",
+      "sample": 1,
+      "lcpMs": 620,
+      "cls": 0.017,
+      "resourceTransferKB": 224,
+      "requests": 14,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/tempostudio/cover-256.avif",
+        "",
+        "",
+        "",
+        "",
+        "http://127.0.0.1:4181/images/optimized/tempostudio/cover-256.avif"
+      ]
+    },
+    {
+      "path": "/tempostudio",
+      "sample": 2,
+      "lcpMs": 636,
+      "cls": 0.017,
+      "resourceTransferKB": 224,
+      "requests": 14,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/tempostudio/cover-256.avif",
+        "",
+        "",
+        "",
+        "",
+        "http://127.0.0.1:4181/images/optimized/tempostudio/cover-256.avif"
+      ]
+    },
+    {
+      "path": "/tempostudio",
+      "sample": 3,
+      "lcpMs": 616,
+      "cls": 0.017,
+      "resourceTransferKB": 224,
+      "requests": 14,
+      "imageSources": [
+        "http://127.0.0.1:4181/images/optimized/tempostudio/cover-256.avif",
+        "",
+        "",
+        "",
+        "",
+        "http://127.0.0.1:4181/images/optimized/tempostudio/cover-256.avif"
+      ]
+    }
+  ]
+}

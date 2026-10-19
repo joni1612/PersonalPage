@@ -3,6 +3,7 @@ import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import PageMeta from "./components/PageMeta";
 
 export default function App() {
   const { pathname } = useLocation();
@@ -15,6 +16,7 @@ export default function App() {
 
   return (
     <>
+      <PageMeta />
       <a className="skip-link" href="#main">
         Skip to content
       </a>

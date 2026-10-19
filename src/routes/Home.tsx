@@ -6,6 +6,7 @@ import ExperienceItem from "../components/ExperienceItem";
 import portrait from "../assets/portrait.jpg";
 import portraitSmall from "../assets/portrait-small.jpg";
 import styles from "./Home.module.css";
+import ResponsiveImage from "../components/ResponsiveImage";
 
 export default function Home() {
   return (
@@ -13,14 +14,17 @@ export default function Home() {
       {/* Hero */}
       <section className={`${styles.hero} rise`} aria-labelledby="hero-name">
         <figure className={styles.heroPortrait}>
-          <img
+          <ResponsiveImage
+            asset="portrait"
+            widths={[480, 900, 1600]}
             src={portrait}
             srcSet={`${portraitSmall} 900w, ${portrait} 1600w`}
             sizes="(max-width: 860px) 90vw, 40vw"
             width={1600}
-            height={1067}
+            height={1066}
             alt="Jonathan Griesinger, smiling, in a navy blazer beside a glass railing in a bright modern building."
             loading="eager"
+            fetchPriority="high"
           />
         </figure>
         <div className={styles.heroText}>

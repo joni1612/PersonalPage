@@ -12,7 +12,7 @@
 #   2. Create an IAM role whose trust policy is scoped to this repo + branch:
 #        repo:joni1612/<repo>:ref:refs/heads/main
 #   3. Grant the role s3:ListBucket, s3:PutObject, s3:DeleteObject on the bucket
-#      and cloudfront:CreateInvalidation on the distribution.
+#      and the CloudFront distribution/function permissions listed in README.md.
 
 name: Deploy to S3
 
@@ -37,7 +37,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -46,14 +46,31 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify static SEO and performance contracts
+        run: npm test && npm run test:build
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Sync dist to S3
-        run: aws s3 sync dist/ "s3://${{ vars.S3_BUCKET }}" --delete
+      - name: Upload versioned assets and images
+        run: |
+          aws s3 cp dist/assets/ "s3://${{ vars.S3_BUCKET }}/assets/" --recursive --cache-control "public, max-age=31536000, immutable"
+          aws s3 cp dist/images/ "s3://${{ vars.S3_BUCKET }}/images/" --recursive --exclude "*/.fingerprint" --cache-control "public, max-age=86400, must-revalidate"
+
+      - name: Upload documents with revalidation
+        run: |
+          aws s3 sync dist/ "s3://${{ vars.S3_BUCKET }}" --delete --exclude "assets/*" --exclude "images/*" --exclude ".vite/*" --cache-control "no-cache"
+          aws s3 cp dist/ "s3://${{ vars.S3_BUCKET }}" --recursive --exclude "*" --include "*.html" --cache-control "no-cache"
+          aws s3 cp dist/robots.txt "s3://${{ vars.S3_BUCKET }}/robots.txt" --cache-control "public, max-age=3600, must-revalidate"
+          aws s3 cp dist/sitemap.xml "s3://${{ vars.S3_BUCKET }}/sitemap.xml" --cache-control "public, max-age=3600, must-revalidate"
+
+      - name: Configure static routes and real 404 responses
+        env:
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: node scripts/configure-cdn.mjs --apply
 
       - name: Invalidate CloudFront cache
         run: |

@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import PageMeta from "../components/PageMeta";
 import { social } from "../data/site";
 import styles from "./IntervalsPrivacy.module.css";
 
@@ -12,7 +11,6 @@ const contents = [
 
 export default function TempoPrivacy() {
   return <div className={`shell ${styles.page}`}>
-    <PageMeta title="Privacy policy · Tempo Studio — Jonathan Griesinger" description="How Tempo Studio handles your selected videos, Intervals.icu connection, routes, fitness data, exports and privacy choices." />
     <Link to="/tempostudio" className={styles.back}>Back to the app</Link>
     <header className={styles.header}>
       <p className={styles.eyebrow}>Tempo Studio</p><h1>Privacy policy</h1>

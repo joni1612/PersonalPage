@@ -11,7 +11,7 @@ for (const route of ["/tempostudio", "/tempostudio/privacy"]) {
     if(route==="/tempostudio") {
       for(const image of await page.getByRole("main").getByRole("img").all()) {
         await image.scrollIntoViewIfNeeded();
-        await expect.poll(()=>image.evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth===1206)).toBe(true);
+        await expect.poll(()=>image.evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth>0&&/\.(avif|webp)$/.test(img.currentSrc))).toBe(true);
       }
     }
   });

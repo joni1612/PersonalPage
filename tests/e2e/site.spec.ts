@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-for (const path of ["/", "/projects", "/missing", "/intervalsicu", "/intervalsicu/privacy"]) {
+for (const path of ["/", "/projects", "/missing", "/intervalsicu", "/intervalsicu/privacy", "/projects/rag-doc-chat", "/projects/invoice-extractor"]) {
   test(`direct load and reload of ${path} are accessible without horizontal overflow`, async ({ page }) => {
     const errors: string[] = [];
     page.on("pageerror", error => errors.push(error.message));

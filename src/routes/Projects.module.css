@@ -21,3 +21,8 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--space-md);
 }
+
+.caseStudy { max-width: var(--measure); display: grid; gap: var(--space-lg); margin-top: var(--space-lg); }
+.caseStudy h2 { margin-bottom: var(--space-sm); }
+.caseStudy p { color: var(--ink-soft); }
+.caseStudy ul { padding-left: var(--space-md); }

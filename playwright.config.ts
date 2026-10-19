@@ -1,4 +1,9 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices, chromium } from "@playwright/test";
+import { existsSync } from "node:fs";
+
+const installedChrome = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ??
+  (!existsSync(chromium.executablePath()) && existsSync(installedChrome) ? installedChrome : undefined);
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -8,7 +13,7 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL: "http://127.0.0.1:4173", trace: "retain-on-failure",
-    launchOptions: { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH },
+    launchOptions: { executablePath },
   },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },

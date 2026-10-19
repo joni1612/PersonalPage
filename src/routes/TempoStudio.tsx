@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import PageMeta from "../components/PageMeta";
 import { social } from "../data/site";
 import styles from "./IntervalsICU.module.css";
+import ResponsiveImage from "../components/ResponsiveImage";
 
 const screenshots = [
   { file: "timeline", title: "Make the cut", text: "Trim, split, reorder and rotate your clips. Undo and redo keep experimentation simple.", alt: "Tempo Studio clip editor with a portrait video canvas, selected clip, timeline handles and editing tools." },
@@ -13,7 +13,6 @@ const screenshots = [
 
 export default function TempoStudio() {
   return <div className={`shell ${styles.page}`}>
-    <PageMeta title="Tempo Studio — Jonathan Griesinger" description="Turn training clips into vertical Reels with your route, activity stats, animated titles and matching covers. A native video editor connected to Intervals.icu." />
     <Link to="/projects" className={styles.back}>← All projects</Link>
     <section className={styles.hero} aria-labelledby="tempo-title">
       <div className={styles.heroCopy}>
@@ -25,7 +24,7 @@ export default function TempoStudio() {
         <p className={styles.note}>An Intervals.icu account is needed for your own activity data. The built-in demo works without an account. Video editing and rendering happen on your device.</p>
       </div>
       <figure className={styles.heroFigure}>
-        <img className={styles.phone} src="/images/tempostudio/cover.png" width={1206} height={2622} fetchPriority="high" alt="Tempo Studio cover editor showing a training-series title over selected outdoor footage." />
+        <ResponsiveImage asset="tempostudio/cover" sizes="(max-width: 420px) 65vw, 256px" className={styles.phone} src="/images/tempostudio/cover.png" width={1206} height={2622} loading="eager" fetchPriority="high" alt="Tempo Studio cover editor showing a training-series title over selected outdoor footage." />
         <figcaption>A matching cover for your training story.</figcaption>
       </figure>
     </section>
@@ -38,7 +37,7 @@ export default function TempoStudio() {
     <section id="screenshots" className={styles.screenshots} aria-labelledby="tempo-screenshots">
       <div className={styles.sectionHeading}><h2 id="tempo-screenshots">Inside Tempo Studio</h2><p>Real iPhone simulator screenshots with demo activity data.</p></div>
       <div className={styles.gallery}>{screenshots.map(item => <figure key={item.file}>
-        <div className={styles.screenCanvas}><a href={`/images/tempostudio/${item.file}.png`} aria-label={`View full-size screenshot: ${item.title}`}><img className={styles.phone} src={`/images/tempostudio/${item.file}.png`} width={1206} height={2622} loading="lazy" alt={item.alt} /></a></div>
+        <div className={styles.screenCanvas}><a href={`/images/tempostudio/${item.file}.png`} aria-label={`View full-size screenshot: ${item.title}`}><ResponsiveImage asset={`tempostudio/${item.file}`} sizes="240px" className={styles.phone} src={`/images/tempostudio/${item.file}.png`} width={1206} height={2622} loading="lazy" alt={item.alt} /></a></div>
         <figcaption><h3>{item.title}</h3><p>{item.text}</p></figcaption>
       </figure>)}</div>
     </section>
