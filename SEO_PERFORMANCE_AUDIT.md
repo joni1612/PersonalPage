@@ -302,8 +302,8 @@ Implemented locally using red/green TDD:
 - Three generated 1200 × 630 social preview images matching the site's visual style.
 - Route-level JavaScript/CSS splitting, preloaded route styles and hydration of the static HTML.
 - Seven Latin WOFF2 font files instead of the original broad font packages.
-- Explicit asset/document cache policies in the deployment workflow and local production preview.
-- Generated CloudFront routing and configuration scripts that rewrite only known pages, preserve encoded queries, and return real 404s for missing content.
+- Explicit asset/document cache policies in the local production preview. The deployment's separate cache-header upload policies were reverted to retain the original sync behavior.
+- S3-only uploads of prerendered documents to their clean URL keys, using the original deployment permissions. CloudFront function/distribution automation was removed at the user's request.
 - Project case studies based on the existing RAG Doc Chat and Invoice Extractor information.
 
 The Tempo Studio cover at 512px is approximately 27 KB as AVIF, compared with the original 1.2 MB PNG. Emitted fonts total approximately 134 KB, compared with the original 848 KB. The shared JavaScript bundle is approximately 300 KB raw / 96 KB gzip; other routes now load as separate chunks.
@@ -311,8 +311,9 @@ The Tempo Studio cover at 512px is approximately 27 KB as AVIF, compared with th
 Deployment and account setup remain external steps:
 
 - No live deployment or AWS configuration change was performed during implementation.
-- Before the next deployment, grant the additional CloudFront permissions documented in `README.md`. The workflow publishes and associates the routing function and replaces the old HTTP-200 SPA error fallback.
-- After deployment, verify production headers, route HTML and 404 responses, then submit the sitemap through the owner's Google Search Console and Bing Webmaster Tools accounts.
+- No additional CloudFront permissions are required. The workflow retains the original S3 sync and cache invalidation, with an S3-only upload of clean URL page objects.
+- Existing CloudFront error responses, redirects and cache settings remain unchanged. Real HTTP 404 responses and explicit production cache policies remain optional infrastructure follow-ups; the local preview's behavior does not establish their production status.
+- After deployment, verify production headers and route HTML, then submit the sitemap through the owner's Google Search Console and Bing Webmaster Tools accounts.
 
 See `TESTING.md` for the red/green record and `verification/seo-performance-results.json` for repeatable synthetic mobile measurements after implementation.
 

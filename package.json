@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:build": "node --test tests/seo-build.test.mjs tests/performance-build.test.mjs tests/hosting.test.mjs",
+    "test:build": "node --test tests/seo-build.test.mjs tests/performance-build.test.mjs tests/hosting.test.mjs tests/deploy-pages.test.mjs",
     "audit:performance": "node scripts/performance.mjs",
     "check": "npm test && npm run build && npm run test:build && npm run test:e2e"
   },

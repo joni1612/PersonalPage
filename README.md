@@ -46,7 +46,7 @@ The build generates responsive AVIF/WebP images and 1200 × 630 social JPEGs wit
 
 ### 1. S3 bucket
 
-Create a private bucket (e.g. `griesinger-portfolio`). The deployment workflow uploads assets first, then images and documents with explicit cache headers. It retains older hashed assets so visitors with an open tab can still navigate after a deployment.
+Create a private bucket (e.g. `griesinger-portfolio`). The deployment workflow uses the original `aws s3 sync dist/ ... --delete` upload, publishes the prerendered pages at their clean URL keys, and invalidates CloudFront's cache.
 
 ```bash
 npm run build
@@ -61,26 +61,20 @@ Keep the bucket private and serve it through CloudFront with an Origin Access Co
 - **Default root object:** `index.html`.
 - **Viewer protocol policy:** Redirect HTTP to HTTPS.
 
-### 3. Static route rewrites and real 404s (required)
+### 3. Prerendered pages with the existing deployment
 
-The build creates `/projects/index.html` and equivalent documents for every public route. A generated CloudFront viewer-request function rewrites only known routes to these objects. It redirects trailing-slash and `index.html` URLs to their canonical clean URLs, preserving query parameters. Requests for files and unknown routes pass through to S3.
+The build creates `/projects/index.html` and equivalent documents for every public route. After the normal sync, `scripts/deploy-pages.mjs` copies each document to an S3 object with its clean URL as the key. For example, `dist/projects/index.html` is uploaded to the object `projects` with content type `text/html; charset=utf-8`. Nested paths such as `tempostudio/privacy` work the same way. The homepage remains `index.html`.
 
-The deployment workflow runs `node scripts/configure-cdn.mjs --apply` to publish the routing function and associate it with the default behavior. It changes the old SPA custom error responses to:
-
-| HTTP error code | Response page path | HTTP response code |
-| --------------- | ------------------ | ------------------ |
-| 403             | `/404.html`        | 404                |
-| 404             | `/404.html`        | 404                |
-
-The deployment role additionally needs `cloudfront:GetDistribution`, `cloudfront:GetDistributionConfig`, `cloudfront:UpdateDistribution`, `cloudfront:ListFunctions`, `cloudfront:DescribeFunction`, `cloudfront:CreateFunction`, `cloudfront:UpdateFunction`, and `cloudfront:PublishFunction`. Scope distribution operations to the website and function operations to `personal-page-routes-*` where IAM supports resource restrictions. The script preserves unrelated distribution settings and refuses to replace an existing viewer-request function or Lambda association. Integrate such an existing function explicitly before deployment.
-
-To prepare and inspect the changes using AWS credentials without applying them:
+This uses the existing S3 upload permissions and requires no CloudFront Function or distribution update. For a manual deployment:
 
 ```bash
-CLOUDFRONT_DISTRIBUTION_ID=YOUR_DIST_ID node scripts/configure-cdn.mjs
+aws s3 sync dist/ s3://YOUR_BUCKET --delete
+node scripts/deploy-pages.mjs YOUR_BUCKET
 ```
 
-Inspect `.prerender/cloudfront-function.js` and `.prerender/distribution-config.json`, then use `--apply` when ready to deploy. No AWS changes are made by the normal build or tests.
+The deployment role needs only the original bucket permissions (`s3:ListBucket`, `s3:PutObject`, `s3:DeleteObject`) and `cloudfront:CreateInvalidation`. CloudFront routing, error responses and cache settings are not changed by deployment.
+
+The existing SPA error fallback can remain as configured. If it maps missing objects to `/index.html` with HTTP 200, missing pages will continue to have that status in production, even though the client recovery page uses `noindex`. Correct HTTP 404 responses would require a separate manual CloudFront configuration change. Automatic trailing-slash redirects are likewise not configured by deployment.
 
 ### 4. Redeploys
 
@@ -90,11 +84,11 @@ CloudFront caches aggressively. After each `aws s3 sync`, invalidate the cache:
 aws cloudfront create-invalidation --distribution-id YOUR_DIST_ID --paths "/*"
 ```
 
-The workflow sets hashed assets to `public, max-age=31536000, immutable`, images to a one-day revalidated lifetime, HTML to `no-cache`, and crawl files to a one-hour revalidated lifetime. CloudFront compression remains enabled.
+The original sync behavior and existing CloudFront cache/compression settings are retained. Deployment no longer applies the separate cache-header upload policies introduced during the audit implementation.
 
 ## Verify the deploy
 
-Load and hard-refresh `/projects` directly. Its HTML source must contain the Projects heading and unique metadata. Confirm that `/robots.txt` returns plain text, `/sitemap.xml` returns XML, and both an unknown page and a missing asset return HTTP 404. Use `npm run preview` to exercise the same routing, content types and cache policies locally.
+Load and hard-refresh `/projects` and `/tempostudio/privacy` directly. Their HTML source must contain the correct heading and unique metadata. Confirm that `/robots.txt` returns plain text and `/sitemap.xml` returns XML. The local preview serves real 404s and explicit cache policies for development checks; those responses do not imply that the existing production CloudFront configuration was changed.
 
 After deployment, register `https://jonathangriesinger.de/sitemap.xml` in Google Search Console and Bing Webmaster Tools using the site owner's accounts. Account verification is an external setup step, not part of the build.
 
@@ -106,4 +100,4 @@ After deployment, register `https://jonathangriesinger.de/sitemap.xml` in Google
 
 After deployment, use `https://jonathangriesinger.de/tempostudio` for marketing, `https://jonathangriesinger.de/tempostudio#support` for support and `https://jonathangriesinger.de/tempostudio/privacy` for the App Store privacy URL. The app is preparing for launch; no App Store download link or badge is fabricated. Keep the public policy and App Store privacy answers consistent with the shipping binary.
 
-The generated CloudFront function covers direct requests to both Tempo Studio routes. A push to `main` triggers the S3/CloudFront deployment workflow. Creating a local commit does not deploy the site. The privacy URL must be publicly reachable before submitting the iOS app.
+The clean-key S3 uploads cover direct requests to both Tempo Studio routes. A push to `main` triggers the S3/CloudFront deployment workflow. Creating a local commit does not deploy the site. The privacy URL must be publicly reachable before submitting the iOS app.
